@@ -148,7 +148,7 @@ static void timer_irs(void)
 }
 
 #elif ESP
-void ICACHE_FLASH_ATTR timer_irs(void* arvg)
+void timer_irs(void* arvg)
 {
     timer_cnt++;
 
