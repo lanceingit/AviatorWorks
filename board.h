@@ -1,7 +1,5 @@
 #pragma once
 
-#define F3_EVO
-
 #include "chip.h"
 
 #define MM_HEAP_SIZE        (4*1024)
