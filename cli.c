@@ -332,9 +332,21 @@ void cli_device_init(void)
 #endif
 }
 
+void cli_print_logo(void)
+{
+    cli_device_write("\n");
+    cli_device_write(" _______       _____       _____\n");
+    cli_device_write(" ___    |__   ____(_)_____ __  /______________ \n");
+    cli_device_write(" __  /| |_ | / /_  /_  __ `/  __/  __ \\_  ___/\n");
+    cli_device_write(" _  ___ |_ |/ /_  / / /_/ // /_ / /_/ /  /\n");\
+    cli_device_write(" /_/  |_|____/ /_/  \\__,_/ \\__/ \\____//_/\n\n");    
+}
+
 void cli_init(void)
 {
     cli_device_init();
     cli_regist("help", help_shell);
     cli_regist("reboot", reboot_shell);
+
+    cli_print_logo();
 }
