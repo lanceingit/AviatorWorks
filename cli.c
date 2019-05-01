@@ -8,7 +8,7 @@
  * 
  * cli.c
  *
- * v1.3
+ * v1.4
  *
  * command line interface module
  */
@@ -36,8 +36,6 @@
 #include "debug.h"
 #include "mm.h"
 #include "printf.h"
-
-#define PRINT         printf
 
 /*
 intput -> string ->  cmd/arg0/arg1/... -> function(arg0,arg1,...) -> output
@@ -111,7 +109,7 @@ void cli_regist(const char* name, shell_func cmd)
     cmd_total++;
 }
 
-int cli_device_read(uint8_t* socket_buffer, uint16_t size)
+int cli_device_read(uint8_t* data, uint16_t size)
 {
 #ifdef STM32F3
     uint16_t i;
@@ -127,14 +125,14 @@ int cli_device_read(uint8_t* socket_buffer, uint16_t size)
     int len = 0;
 
     bzero(socket_buffer, size);
-    len = recvfrom(cli_socket_fd, socket_buffer, size, 0, (struct sockaddr*)&recv_addr,
+    len = recvfrom(cli_socket_fd, data, size, 0, (struct sockaddr*)&recv_addr,
                    (socklen_t*)&addr_len);
 
     if(len > 0) {
 //        char* client_ip = inet_ntoa(recv_addr.sin_addr);
 //        PRINT("ip:%s port:%d len:%d\n", client_ip, recv_addr.sin_port, len);
 //        for(uint16_t i=0; i<len; i++) {
-//        	PRINT("%x ", socket_buffer[i]);
+//        	PRINT("%x ", data[i]);
 //        }
 //        PRINT("\n");
     }
@@ -167,8 +165,7 @@ void cli_device_write(const char* format, ...)
     int len;
 
     va_start(args, format);
-//	len = vsprintf((char*)write_buffer, format, args);
-    len = evprintf(format, args);
+    len = evsprintf((char*)write_buffer, format, args);
     va_end(args);
 
 #ifdef STM32F3

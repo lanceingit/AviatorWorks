@@ -8,7 +8,7 @@
  * 
  * scheduler.c
  *
- * v1.0
+ * v1.1
  *
  * Simple scheduling system, task form
  */
@@ -27,7 +27,12 @@ void task_print_list(void)
 {
     PRINT("NAME\t\tCYCLE/us\tSTATUS\n");
     for(uint8_t i=0; i<task_cnt; i++) {
-        PRINT("[%s]\t\t%lld\t\t%s\n", task_tab[i]->name, task_tab[i]->rate, task_tab[i]->run? "run":"idle");
+        if(strlen(task_tab[i]->name) > 6) {
+            PRINT("[%s]\t%lld\t\t%s\n", task_tab[i]->name, task_tab[i]->rate, task_tab[i]->run? "run":"idle");
+        }
+        else {
+            PRINT("[%s]\t\t%lld\t\t%s\n", task_tab[i]->name, task_tab[i]->rate, task_tab[i]->run? "run":"idle");
+        }
     }
 }
 
