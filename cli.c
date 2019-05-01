@@ -8,7 +8,7 @@
  * 
  * cli.c
  *
- * v1.2
+ * v1.3
  *
  * command line interface module
  */
@@ -17,7 +17,9 @@
 #include <string.h>
 #include <stdarg.h>
 
-#ifdef LINUX
+#ifdef STM32F3
+    #include "serial.h"
+#elif LINUX
     #include <stdlib.h>
     #include <unistd.h>
     #include <arpa/inet.h>
@@ -64,7 +66,14 @@ void help_shell(int argc, char* argv[]);
 void reboot_shell(int argc, char* argv[]);
 
 
-#ifdef LINUX
+#ifdef STM32F3
+    #define RX_BUF_SIZE 300    
+    #define TX_BUF_SIZE 512 
+
+    Serial* cli_port;
+    uint8_t cli_rxBuf[RX_BUF_SIZE]; 
+    uint8_t cli_txBuf[TX_BUF_SIZE];
+#elif LINUX
     #define CLI_PORT  14558
     static int cli_socket_fd = -1;
     static struct sockaddr_in recv_addr;
@@ -105,7 +114,14 @@ void cli_regist(const char* name, shell_func cmd)
 int cli_device_read(uint8_t* socket_buffer, uint16_t size)
 {
 #ifdef STM32F3
-    return 0;
+    uint16_t i;
+    
+    for(i=0; i<size; i++) {
+        if(serial_read(cli_port, &data[i]) < 0)
+            break;
+    }    
+    
+    return i;    
 
 #elif LINUX
     int len = 0;
@@ -156,6 +172,7 @@ void cli_device_write(const char* format, ...)
     va_end(args);
 
 #ifdef STM32F3
+    serial_write(cli_port, write_buffer, len);  
 #elif LINUX
     sendto(cli_socket_fd, write_buffer, len, 0, (struct sockaddr*)&recv_addr, addr_len);
 
@@ -275,6 +292,7 @@ void cli_thread_entry(void* parameter)
 void cli_device_init(void)
 {
 #ifdef STM32F3
+    cli_port = serial_open(CLI_UART, 115200, cli_rxBuf, RX_BUF_SIZE, cli_txBuf, TX_BUF_SIZE);
 #elif LINUX
     int flag = 0;
     struct sockaddr_in addr;
