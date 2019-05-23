@@ -8,7 +8,7 @@
  *
  * printf.c
  *
- * v1.0
+ * v1.1
  *
  * vprintf function, support %f
  */
