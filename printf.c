@@ -307,7 +307,7 @@ int evsprintf(char* buf, const char* fmt, va_list ap)
                 len += itoa_dec((int)num, width, pad);
                 putcf('.');
                 len++;
-                len += itoa_dec((num - (int)num) * powerf(10, precision), precision, pad);
+                len += itoa_dec((num - (int)num) * powerf(10, precision), precision, '0');
                 break;
             case 's':
                 str = va_arg(ap, char*);
